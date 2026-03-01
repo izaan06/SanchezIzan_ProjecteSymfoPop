@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.title }} - SymfoPop{% endblock %}
+
+{% block body %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_product_index') }}">Productes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <img src="{{ product.image|default('https://picsum.photos/seed/' ~ product.id ~ '/600/400') }}" class="img-fluid" alt="{{ product.title }}">
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 p-4 h-100">
+                <div class="mb-4">
+                    <h1 class="h2 mb-2">{{ product.title }}</h1>
+                    <div class="h3 text-success mb-3">{{ product.price|number_format(2, ',', '.') }} €</div>
+                    <div class="p-3 bg-light rounded">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-2">Descripció</h6>
+                        <p class="mb-0">{{ product.description }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-auto pt-4 border-top">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; font-weight: bold;">
+                            {{ product.owner.name|first|upper }}
+                        </div>
+                        <div>
+                            <div class="fw-bold">{{ product.owner.name }}</div>
+                            <div class="small text-muted">Publicat el {{ product.createdAt|date('d/m/Y') }}</div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        {% if app.user == product.owner %}
+                            <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-warning">Editar Producte</a>
+                            <form method="post" action="{{ path('app_product_delete', {id: product.id}) }}" onsubmit="return confirm('Estàs segur que vols eliminar aquest producte?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                                <button class="btn btn-danger w-100">Esborrar Producte</button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-primary" onclick="alert('Funcionalitat de contacte properament!')">Contactar amb el venedor</button>
+                        {% endif %}
+                        <a href="{{ path('app_product_index') }}" class="btn btn-outline-secondary">Tornar al llistat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
